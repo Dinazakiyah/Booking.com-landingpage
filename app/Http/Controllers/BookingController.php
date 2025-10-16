@@ -5,54 +5,76 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class BookingController 
+class BookingController extends Controller
 {
-    public function store(Request $request)
+    public function index()
     {
-        $validated = $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'guest_name' => 'required|string|max:255',
-            'guest_email' => 'required|email',
-            'guest_phone' => 'required|string|max:20',
-            'check_in' => 'required|date|after_or_equal:today',
-            'check_out' => 'required|date|after:check_in',
-            'adults' => 'required|integer|min:1',
-            'children' => 'nullable|integer|min:0',
-            'rooms' => 'required|integer|min:1',
+        $bookings = Booking::with('property')->orderBy('created_at', 'desc')->get();
+        return view('bookings.index', compact('bookings'));
+    }
+
+    public function create($propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+        return view('bookings.create', compact('property'));
+    }
+
+    public function store(Request $request, $propertyId)
+    {
+        $property = Property::findOrFail($propertyId);
+
+        $request->validate([
+            'check_in_date' => 'required|date',
+            'check_out_date' => 'required|date|after:check_in_date',
         ]);
 
-        $property = Property::findOrFail($validated['property_id']);
+        $days = (new \DateTime($request->check_in_date))
+            ->diff(new \DateTime($request->check_out_date))
+            ->days;
 
-        // Calculate total nights
-        $checkIn = new \DateTime($validated['check_in']);
-        $checkOut = new \DateTime($validated['check_out']);
-        $nights = $checkIn->diff($checkOut)->days;
+        $totalPrice = $property->price_per_night * $days;
 
-        // Calculate total price
-        $totalPrice = $property->price_per_night * $nights * $validated['rooms'];
-
-        $booking = Booking::create([
-            'property_id' => $validated['property_id'],
-            'guest_name' => $validated['guest_name'],
-            'guest_email' => $validated['guest_email'],
-            'guest_phone' => $validated['guest_phone'],
-            'check_in' => $validated['check_in'],
-            'check_out' => $validated['check_out'],
-            'adults' => $validated['adults'],
-            'children' => $validated['children'] ?? 0,
-            'rooms' => $validated['rooms'],
+        Booking::create([
+            'user_id' => Auth::id() ?? 1, // sementara 1 kalau belum login
+            'property_id' => $property->id,
+            'check_in_date' => $request->check_in_date,
+            'check_out_date' => $request->check_out_date,
             'total_price' => $totalPrice,
             'status' => 'pending',
         ]);
 
-        return redirect()->route('booking.show', $booking)
-            ->with('success', 'Booking berhasil dibuat!');
+        return redirect()->route('bookings.index')->with('success', 'Pemesanan berhasil disimpan!');
     }
 
     public function show(Booking $booking)
     {
-        $booking->load('property');
-        return view('booking-confirmation', compact('booking'));
+        return view('bookings.show', compact('booking'));
+    }
+
+    public function edit(Booking $booking)
+    {
+        return view('bookings.edit', compact('booking'));
+    }
+
+    public function update(Request $request, Booking $booking)
+    {
+        $booking->update($request->all());
+        return redirect()->route('bookings.index')->with('success', 'Booking berhasil diperbarui!');
+    }
+
+    public function destroy(Booking $booking)
+    {
+        $booking->delete();
+        return redirect()->route('bookings.index')->with('success', 'Booking berhasil dihapus.');
+    }
+
+    public function updateStatus(Request $request, Booking $booking)
+    {
+        $booking->status = $request->status;
+        $booking->save();
+
+        return redirect()->route('bookings.show', $booking->id)->with('success', 'Status booking diperbarui!');
     }
 }

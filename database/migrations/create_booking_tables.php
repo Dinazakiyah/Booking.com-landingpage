@@ -8,8 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Tabel Users (untuk Authentication)
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('phone')->nullable();
+            $table->enum('role', ['user', 'admin'])->default('user');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        // Tabel Searches
         Schema::create('searches', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('destination');
             $table->date('check_in');
             $table->date('check_out');
@@ -20,10 +35,11 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel Properties
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type'); // hotel, apartment, villa, etc
+            $table->string('type');
             $table->string('location');
             $table->text('description')->nullable();
             $table->decimal('price_per_night', 10, 2);
@@ -31,22 +47,26 @@ return new class extends Migration
             $table->integer('total_reviews')->default(0);
             $table->string('image_url')->nullable();
             $table->boolean('free_cancellation')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
 
+        // Tabel Bookings (dengan relasi ke users)
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->string('guest_name');
             $table->string('guest_email');
             $table->string('guest_phone');
-            $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->date('check_in');
             $table->date('check_out');
             $table->integer('adults');
             $table->integer('children');
             $table->integer('rooms');
             $table->decimal('total_price', 10, 2);
-            $table->string('status')->default('pending'); // pending, confirmed, cancelled
+            $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])->default('pending');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -56,5 +76,6 @@ return new class extends Migration
         Schema::dropIfExists('bookings');
         Schema::dropIfExists('properties');
         Schema::dropIfExists('searches');
+        Schema::dropIfExists('users');
     }
 };

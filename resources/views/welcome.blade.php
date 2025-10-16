@@ -14,130 +14,136 @@
         <nav class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
-                    <a href="{{ route('home') }}" class="text-2xl font-bold">Booking.id</a>
+                    <h1 class="text-2xl font-bold">Booking.id</h1>
                     <div class="hidden md:flex space-x-6">
-                        <a href="#" class="hover:bg-[#0057B8] px-3 py-2 rounded">Menginap</a>
+                        <a href="#" class="hover:bg-[#0057B8] px-3 py-2 rounded">Penginapan</a>
                         <a href="#" class="hover:bg-[#0057B8] px-3 py-2 rounded">Penerbangan</a>
                         <a href="#" class="hover:bg-[#0057B8] px-3 py-2 rounded">Rental Mobil</a>
                         <a href="#" class="hover:bg-[#0057B8] px-3 py-2 rounded">Atraksi</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+            <button class="hover:bg-[#0057B8] px-3 py-2 rounded">IDR</button>
+
+            @if(Session::has('user'))
+                <span class="text-sm">Halo, {{ Session::get('user')->name }}</span>
+                <a href="{{ route('logout') }}" class="hover:bg-[#0057B8] px-3 py-2 rounded">Logout</a>
+            @else
+                <a href="{{ route('login') }}" class="hover:bg-[#0057B8] px-3 py-2 rounded">Login</a>
+                <a href="{{ route('register') }}" class="hover:bg-[#0057B8] px-3 py-2 rounded">Daftar</a>
+            @endif
+        {{-- </div>
+
                     <button class="hover:bg-[#0057B8] px-3 py-2 rounded">IDR</button>
                     <button class="hover:bg-[#0057B8] px-3 py-2 rounded"><i class="fas fa-user-circle"></i></button>
                 </div>
-            </div>
+            </div> --}}
         </nav>
 
-        <!-- Hero Section with Search Form -->
-        <div class="container mx-auto px-4 py-12">
-            <h2 class="text-4xl font-bold mb-2">Cari penawaran untuk hotel, rumah, dan masih banyak lagi...</h2>
-            <p class="text-xl mb-8">Dari penginapan yang nyaman hingga rumah mewah</p>
+<!-- Hero Section with Search Form -->
+<div class="container mx-auto px-4 py-12">
+    <h2 class="text-4xl font-bold mb-2">Cari penawaran untuk hotel, rumah, dan masih banyak lagi...</h2>
+    <p class="text-xl mb-8">Dari penginapan yang nyaman hingga rumah mewah</p>
 
-            <!-- Search Form -->
-            <form action="{{ route('search.results') }}" method="POST" class="bg-yellow-400 p-1 rounded-lg shadow-lg">
-                @csrf
-                <div class="bg-white rounded-lg p-4">
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        <!-- Destination -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold mb-2">
-                                <i class="fas fa-bed text-gray-600"></i> Tujuan/nama properti
-                            </label>
-                            <input type="text"
-                                   name="destination"
-                                   placeholder="Mau ke mana?"
-                                   required
-                                   class="w-full px-4 py-3 border-2 border-yellow-400 rounded focus:outline-none focus:border-blue-600">
-                        </div>
+    <!-- ✅ Search Form FIXED -->
+    <form action="{{ route('search.results') }}" method="POST" class="bg-yellow-400 p-1 rounded-lg shadow-lg relative z-10">
+        @csrf
+        <div class="bg-white rounded-lg p-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <!-- Destination -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-bed text-gray-600"></i> Tujuan/nama properti
+                    </label>
+                    <input type="text"
+                        name="destination"
+                        placeholder="Mau ke mana?"
+                        required
+                        class="w-full px-4 py-3 border-2 border-yellow-400 rounded focus:outline-none focus:border-blue-600 text-gray-800 placeholder-gray-500">
+                </div>
 
-                        <!-- Check-in Date -->
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">
-                                <i class="fas fa-calendar text-gray-600"></i> Check-in
-                            </label>
-                            <input type="date"
-                                   name="check_in"
-                                   required
-                                   min="{{ date('Y-m-d') }}"
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded focus:outline-none focus:border-blue-600">
-                        </div>
+                <!-- Check-in Date -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-calendar text-gray-600"></i> Check-in
+                    </label>
+                    <input type="date"
+                        name="check_in"
+                        required
+                        min="{{ date('Y-m-d') }}"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded focus:outline-none focus:border-blue-600 text-gray-800">
+                </div>
 
-                        <!-- Check-out Date -->
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">
-                                <i class="fas fa-calendar text-gray-600"></i> Check-out
-                            </label>
-                            <input type="date"
-                                   name="check_out"
-                                   required
-                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded focus:outline-none focus:border-blue-600">
-                        </div>
+                <!-- Check-out Date -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-calendar text-gray-600"></i> Check-out
+                    </label>
+                    <input type="date"
+                        name="check_out"
+                        required
+                        min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded focus:outline-none focus:border-blue-600 text-gray-800">
+                </div>
 
-                        <!-- Guests -->
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">
-                                <i class="fas fa-user text-gray-600"></i> Tamu & Kamar
-                            </label>
-                            <div class="relative">
-                                <button type="button"
-                                        id="guestBtn"
-                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded text-left focus:outline-none focus:border-blue-600">
-                                    <span id="guestDisplay">2 dewasa · 1 kamar</span>
-                                </button>
+                <!-- Guests -->
+                <div class="relative">
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-user text-gray-600"></i> Tamu & Kamar
+                    </label>
+                    <button type="button"
+                        id="guestBtn"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded text-left focus:outline-none focus:border-blue-600 text-gray-800">
+                        <span id="guestDisplay">2 dewasa · 1 kamar</span>
+                    </button>
 
-                                <!-- Dropdown -->
-                                <div id="guestDropdown" class="hidden absolute z-10 mt-2 w-80 bg-white border rounded-lg shadow-xl p-4">
-                                    <div class="space-y-4">
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-semibold">Dewasa</span>
-                                            <div class="flex items-center space-x-3">
-                                                <button type="button" onclick="changeGuest('adults', -1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">-</button>
-                                                <span id="adultsDisplay" class="w-8 text-center">2</span>
-                                                <button type="button" onclick="changeGuest('adults', 1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">+</button>
-                                            </div>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-semibold">Anak-anak</span>
-                                            <div class="flex items-center space-x-3">
-                                                <button type="button" onclick="changeGuest('children', -1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">-</button>
-                                                <span id="childrenDisplay" class="w-8 text-center">0</span>
-                                                <button type="button" onclick="changeGuest('children', 1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">+</button>
-                                            </div>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-semibold">Kamar</span>
-                                            <div class="flex items-center space-x-3">
-                                                <button type="button" onclick="changeGuest('rooms', -1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">-</button>
-                                                <span id="roomsDisplay" class="w-8 text-center">1</span>
-                                                <button type="button" onclick="changeGuest('rooms', 1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">+</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="button" onclick="closeGuestDropdown()" class="mt-4 w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700">Selesai</button>
+                    <!-- Dropdown -->
+                    <div id="guestDropdown" class="hidden absolute z-20 mt-2 w-80 bg-white border rounded-lg shadow-xl p-4">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold">Dewasa</span>
+                                <div class="flex items-center space-x-3">
+                                    <button type="button" onclick="changeGuest('adults', -1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">-</button>
+                                    <span id="adultsDisplay" class="w-8 text-center">2</span>
+                                    <button type="button" onclick="changeGuest('adults', 1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">+</button>
                                 </div>
                             </div>
-                            <input type="hidden" name="adults" id="adults" value="2">
-                            <input type="hidden" name="children" id="children" value="0">
-                            <input type="hidden" name="rooms" id="rooms" value="1">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold">Anak-anak</span>
+                                <div class="flex items-center space-x-3">
+                                    <button type="button" onclick="changeGuest('children', -1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">-</button>
+                                    <span id="childrenDisplay" class="w-8 text-center">0</span>
+                                    <button type="button" onclick="changeGuest('children', 1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">+</button>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold">Kamar</span>
+                                <div class="flex items-center space-x-3">
+                                    <button type="button" onclick="changeGuest('rooms', -1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">-</button>
+                                    <span id="roomsDisplay" class="w-8 text-center">1</span>
+                                    <button type="button" onclick="changeGuest('rooms', 1)" class="w-8 h-8 border-2 border-blue-600 text-blue-600 rounded-full">+</button>
+                                </div>
+                            </div>
                         </div>
+                        <button type="button" onclick="closeGuestDropdown()" class="mt-4 w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700">Selesai</button>
                     </div>
 
-                    <div class="mt-4 flex items-center space-x-4">
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 w-5 h-5">
-                            <span class="text-sm">Saya mencari tempat untuk bekerja sambil liburan</span>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 rounded-lg font-bold text-lg">
-                        Cari
-                    </button>
+                    <input type="hidden" name="adults" id="adults" value="2">
+                    <input type="hidden" name="children" id="children" value="0">
+                    <input type="hidden" name="rooms" id="rooms" value="1">
                 </div>
-            </form>
+            </div>
+
+            <!-- ✅ Single functional button -->
+            <div class="mt-4 text-center">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-12 py-3 rounded-lg font-bold text-lg">
+                    Cari
+                </button>
+            </div>
         </div>
-    </header>
+    </form>
+</div>
+
 
     <!-- Popular Destinations -->
     <section class="container mx-auto px-4 py-12">
@@ -192,7 +198,98 @@
     <!-- Featured Properties -->
     <section class="container mx-auto px-4 py-12">
         <h2 class="text-2xl font-bold mb-6">Properti pilihan kami</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    @if(session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        @forelse($featuredProperties as $property)
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition relative">
+            <img src="{{ $property->image_url ?? 'https://picsum.photos/300/200?random=' . $property->id }}"
+                 alt="{{ $property->name }}"
+                 class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="font-bold text-lg mb-1">{{ $property->name }}</h3>
+                <p class="text-sm text-gray-600 mb-2">{{ $property->location }}</p>
+                <div class="flex items-center mb-2">
+                    <div class="bg-blue-800 text-white px-2 py-1 rounded text-sm font-bold">
+                        {{ $property->rating }}
+                    </div>
+                    <span class="ml-2 text-sm text-gray-600">{{ $property->total_reviews }} ulasan</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-xl font-bold text-gray-900">
+                            Rp {{ number_format($property->price_per_night, 0, ',', '.') }}
+                        </p>
+                        <p class="text-xs text-gray-600">per malam</p>
+                    </div>
+                    @if($property->free_cancellation)
+                    <span class="text-xs text-green-600 font-semibold">Gratis pembatalan</span>
+                    @endif
+                </div>
+                <button onclick="openBookingModal('{{ $property->id }}', '{{ $property->name }}')"
+                    class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold">
+                    Pesan Sekarang
+                </button>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-4 text-center py-8 text-gray-500">
+            Belum ada properti tersedia
+        </div>
+        @endforelse
+    </div>
+</section>
+
+<!-- ✅ Modal Booking -->
+<div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg relative">
+        <button onclick="closeBookingModal()" class="absolute top-3 right-3 text-gray-600 text-xl font-bold">&times;</button>
+        <h3 class="text-xl font-bold mb-4">Form Booking</h3>
+
+        <form action="{{ route('bookings.store', ['property' => $property->id]) }}" method="POST" class="space-y-4">
+
+            @csrf
+            <input type="hidden" name="property_id" id="modalPropertyId">
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Nama Properti</label>
+                <input type="text" id="modalPropertyName" class="w-full px-3 py-2 border rounded bg-gray-100" readonly>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Nama Tamu</label>
+                <input type="text" name="guest_name" required class="w-full px-3 py-2 border rounded">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Check-in</label>
+                    <input type="date" name="check_in" required min="{{ date('Y-m-d') }}" class="w-full px-3 py-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Check-out</label>
+                    <input type="date" name="check_out" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" class="w-full px-3 py-2 border rounded">
+                </div>
+            </div>
+
+            <div class="text-right">
+                <button type="button" onclick="closeBookingModal()" class="px-4 py-2 border rounded text-gray-600 mr-2">
+                    Batal
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700">
+                    Konfirmasi Booking
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+        {{-- <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             @forelse($featuredProperties as $property)
             <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
                 <img src="{{ $property->image_url ?? 'https://picsum.photos/300/200?random=' . $property->id }}"
@@ -216,10 +313,6 @@
                         <span class="text-xs text-green-600 font-semibold">Gratis pembatalan</span>
                         @endif
                     </div>
-                    <a href="{{ route('property.show', $property->id) }}"
-                       class="mt-3 block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded font-semibold">
-                        Lihat Detail
-                    </a>
                 </div>
             </div>
             @empty
@@ -227,7 +320,7 @@
                 Belum ada properti tersedia
             </div>
             @endforelse
-        </div>
+        </div> --}}
     </section>
 
     <!-- Footer -->
@@ -267,7 +360,8 @@
                 </div>
             </div>
             <div class="border-t border-blue-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; 2025 Booking Clone. Dibuat dengan Laravel 11 & PostgreSQL</p>
+                <p>&copy; 2025 Booking.com Dibuat dengan Laravel 11 & PostgreSQL</p>
+                <p>Dibuat oleh kelompok 6</p>
             </div>
         </div>
     </footer>
@@ -317,5 +411,18 @@
             }
         });
     </script>
+        <script>
+        function openBookingModal(id, name) {
+            document.getElementById('modalPropertyId').value = id;
+            document.getElementById('modalPropertyName').value = name;
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+    </script>
+
+
 </body>
 </html>

@@ -7,6 +7,7 @@ use App\Models\Property;
 
 class PropertySeeder extends Seeder
 {
+    
     public function run(): void
     {
         $properties = [

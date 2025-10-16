@@ -35,6 +35,18 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        // database/migrations/xxxx_xx_xx_create_users_table.php
+
+    Schema::create('users', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->string('password');
+        $table->timestamps();
+    });
+
+
     }
 
     /**
@@ -47,3 +59,4 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
     }
 };
+

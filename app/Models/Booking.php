@@ -2,33 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Booking extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'guest_name',
-        'guest_email',
-        'guest_phone',
+        'user_id',
         'property_id',
-        'check_in',
-        'check_out',
-        'adults',
-        'children',
-        'rooms',
+        'check_in_date',
+        'check_out_date',
         'total_price',
         'status',
     ];
 
-    protected $casts = [
-        'check_in' => 'date',
-        'check_out' => 'date',
-        'total_price' => 'decimal:2',
-    ];
-
-    public function property(): BelongsTo
+    public function property()
     {
         return $this->belongsTo(Property::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
